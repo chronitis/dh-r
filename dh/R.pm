@@ -36,6 +36,9 @@ sub parse_depends {
     my $field = shift;
     my @text = split(/,/, qx/grep-dctrl -s $field -n . DESCRIPTION/);
     my @deps;
+    my @aptavail = qx/grep-aptavail -P -s Package -n -e ^r-/;
+    my %apthash;
+    @apthash{@aptavail} = ();
     foreach my $dep (@text) {
         chomp $dep;
         # rely on the R version format being equivalent
@@ -49,10 +52,10 @@ sub parse_depends {
             next;
         }
 
-        if (system("sh", "-c", "dpkg-query -W r-cran-$pkg 2>/dev/null") == 0) {
+        if (exists $apthash{"r-cran-$pkg"}) {
             say "I: Using r-cran-$pkg for $field:$dep";
             push (@deps, "r-cran-$pkg $vers");
-        } elsif (system("sh", "-c", "dpkg-query -W r-bioc-$pkg 2>/dev/null") == 0) {
+        } elsif (exists $apthash{"r-bioc-$pkg"}) {
             say "I: Using r-bioc-$pkg for $field:$dep";
             push (@deps, "r-bioc-$pkg $vers");
         } else {
