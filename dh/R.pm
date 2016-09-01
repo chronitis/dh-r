@@ -69,13 +69,13 @@ sub install {
     # it would be nice to use Dpkg::Control::Info here since the
     # format is the same, but we can't because it checks the first
     # block contains Source: and errors when it doesn't
-    my $rpackage = qx/grep-dctrl -s Package -n . DESCRIPTION/;
-    my $rversion = qx/grep-dctrl -s Version -n . DESCRIPTION/;
+    chomp(my $rpackage = qx/grep-dctrl -s Package -n . DESCRIPTION/);
+    chomp(my $rversion = qx/grep-dctrl -s Version -n . DESCRIPTION/);
 
     say "I: R Package: $rpackage Version: $rversion";
 
     # Priority: Recommended should go in /library instead of /site-library
-    my $rpriority = qx/grep-dctrl -s Priority -n . DESCRIPTION/;
+    chomp(my $rpriority = qx/grep-dctrl -s Priority -n . DESCRIPTION/);
 
     my $libdir = "usr/lib/R/site-library";
     if ($rpriority eq "Recommended") {
@@ -85,11 +85,11 @@ sub install {
 
     # this appears to be set ("CRAN") for packages originating from CRAN,
     # but is not set for bioconductor, nor for packages direct from upstream
-    my $rrepo = qx/grep-dctrl -s Repository -n . DESCRIPTION/;
+    chomp(my $rrepo = qx/grep-dctrl -s Repository -n . DESCRIPTION/);
 
     # however, biocViews is (presumably) only going to be set for bioconductor
     # packages, so nonzero should identify
-    my $rbiocviews = qx/grep-dctrl -s biocViews -n . DESCRIPTION/;
+    chomp(my $rbiocviews = qx/grep-dctrl -s biocViews -n . DESCRIPTION/);
 
     my $srcctrl = Dpkg::Control::Info->new()->get_source();
 
@@ -119,13 +119,13 @@ sub install {
     my $debname = "r-" . lc($repo) . "-" . lc($rpackage);
     say "I: Using debian package name: $debname";
 
-    my $rpkgversion = qx/dpkg-query -W -f='\${Version}' r-base-dev/;
+    chomp(my $rpkgversion = qx/dpkg-query -W -f='\${Version}' r-base-dev/);
     say "I: Building using R version $rpkgversion";
 
-    my $rapiversion = qx/dpkg-query -W -f='\${Provides}' r-base-core | grep -o 'r-api[^, ]*'/;
+    chomp(my $rapiversion = qx/dpkg-query -W -f='\${Provides}' r-base-core | grep -o 'r-api[^, ]*'/);
     say "I: R API version: $rapiversion";
 
-    my $builttime = qx/dpkg-parsechangelog | grep-dctrl -s Date -n ./;
+    chomp(my $builttime = qx/dpkg-parsechangelog | grep-dctrl -s Date -n ./);
     say "I: Using built-time from d/changelog: $builttime";
 
 
