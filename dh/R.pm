@@ -148,7 +148,7 @@ sub install {
 
     $this->doit_in_sourcedir(@instargs);
 
-    my @toremove = ("R.css", "COPYING*", "LICENSE*");
+    my @toremove = ("R.css", "COPYING", "COPYING.txt", "LICENSE", "LICENSE.txt");
     foreach my $rmf (@toremove) {
         $this->doit_in_sourcedir("rm", "-vf", "$destdir/$libdir/$rpackage/$rmf");
     }
