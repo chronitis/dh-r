@@ -39,7 +39,7 @@ sub parse_depends {
     foreach my $dep (@text) {
         chomp $dep;
         # rely on the R version format being equivalent
-        $dep =~ /^(\w+)\s*(\(.*\))?$/;
+        $dep =~ /^\s*(\w+)\s*(\(.*\))?$/;
         my $pkg = lc $1;
         my $vers = $2;
         if ($pkg eq "r") {
