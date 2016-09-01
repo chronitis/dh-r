@@ -36,9 +36,13 @@ sub parse_depends {
     my $field = shift;
     my @text = split(/,\s*/, qx/grep-dctrl -s $field -n . DESCRIPTION/);
     my @deps;
+
+    # get all available r-* packages from which we can guess dependencies
     my @aptavail = qx/grep-aptavail -P -s Package -n -e ^r-/;
     my %apthash;
     @apthash{@aptavail} = ();
+
+
     foreach my $dep (@text) {
         chomp $dep;
         # rely on the R version format being equivalent
@@ -52,10 +56,12 @@ sub parse_depends {
             next;
         }
 
-        if (exists $apthash{"r-cran-$pkg"}) {
+        # check if r-cran-pkg or r-bioc-pkg exists, and add it as a
+        # dependency (or recommend/suggest)
+        if (exists $apthash{"r-cran-$pkg\n"}) {
             say "I: Using r-cran-$pkg for $field:$dep";
             push (@deps, "r-cran-$pkg $vers");
-        } elsif (exists $apthash{"r-bioc-$pkg"}) {
+        } elsif (exists $apthash{"r-bioc-$pkg\n"}) {
             say "I: Using r-bioc-$pkg for $field:$dep";
             push (@deps, "r-bioc-$pkg $vers");
         } else {
