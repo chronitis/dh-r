@@ -1,0 +1,12 @@
+Source: dh-r
+Section: science
+Priority: optional
+Maintainer: Gordon Ball <gordon@chronitis.net>
+Build-Depends: debhelper (>= 9), libdpkg-perl
+Standards-Version: 3.9.8
+
+Package: dh-r
+Architecture: all
+Depends: ${misc:Depends}, r-base-dev
+Description: Debian helper tools for packaging Julia libraries
+ Provides the julia buildsystem for debhelper.
