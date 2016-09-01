@@ -49,10 +49,10 @@ sub parse_depends {
             next;
         }
 
-        if (system("dpkg-query", "-W", "r-cran-$pkg") == 0) {
+        if (system("sh", "-c", "dpkg-query -W r-cran-$pkg 2>/dev/null") == 0) {
             say "I: Using r-cran-$pkg for $field:$dep";
             push (@deps, "r-cran-$pkg $vers");
-        } elsif (system("dpkg-query", "-W", "r-bioc-$pkg") == 0) {
+        } elsif (system("sh", "-c", "dpkg-query -W r-bioc-$pkg 2>/dev/null") == 0) {
             say "I: Using r-bioc-$pkg for $field:$dep";
             push (@deps, "r-bioc-$pkg $vers");
         } else {
