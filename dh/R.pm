@@ -143,6 +143,7 @@ sub install {
         say "I: Using extra install flags: $ENV{RExtraInstallFlags}";
         push (@instargs, $ENV{RExtraInstallFlags});
     }
+    push (@instargs, ".");
     push (@instargs, "--built-timestamp='$builttime'");
 
     $this->doit_in_sourcedir(@instargs);
