@@ -34,14 +34,9 @@ sub parse_depends {
     # list of debian package dependencies
 
     my $field = shift;
+    my %apthash = %{shift()};
     my @text = split(/,\s*/, qx/grep-dctrl -s $field -n . DESCRIPTION/);
     my @deps;
-
-    # get all available r-* packages from which we can guess dependencies
-    my @aptavail = qx/grep-aptavail -P -s Package -n -e ^r-/;
-    my %apthash;
-    @apthash{@aptavail} = ();
-
 
     foreach my $dep (@text) {
         chomp $dep;
@@ -164,12 +159,17 @@ sub install {
         }
     }
 
-    my $sourcepackage = $this->sourcepackage();
-    my $rdepends = join(",", parse_depends("Depends"));
-    my $rrecommends = join(",", parse_depends("Recommends"));
-    my $rsuggests = join(",", parse_depends("Suggests"));
-    my $rimports = join(",", parse_depends("Imports"));
+    # get all available r-* packages from which we can guess dependencies
+    my @aptavail = qx/grep-aptavail -P -s Package -n -e ^r-/;
+    my %apthash;
+    @apthash{@aptavail} = ();
 
+    my $rdepends = join(",", parse_depends("Depends", \%apthash));
+    my $rrecommends = join(",", parse_depends("Recommends", \%apthash));
+    my $rsuggests = join(",", parse_depends("Suggests", \%apthash));
+    my $rimports = join(",", parse_depends("Imports", \%apthash));
+
+    my $sourcepackage = $this->sourcepackage();
     open(my $svs, ">>", "debian/$sourcepackage.substvars");
     say $svs "R:Depends=r-base-core (>= $rbase_version), $rapi_version";
     say $svs "R:PkgDepends=$rdepends, $rimports";
