@@ -143,6 +143,11 @@ sub install {
     if (defined $ENV{RMakeFlags}) {
         say "I: Using MAKEFLAGS=" . $ENV{RMakeFlags};
         push (@instargs, "MAKEFLAGS=" . $ENV{RMakeFlags});
+    } else {
+        my $ldflags = qx/dpkg-buildflags --get LDFLAGS/;
+        $ldflags =~ s/ /\\ /g;
+        $ENV{MAKEFLAGS} = "'LDFLAGS=$ldflags'";
+        say "I: Using MAKEFLAGS=$ENV{MAKEFLAGS}";
     }
 
     push (@instargs, "R", "CMD", "INSTALL", "-l", "$destdir/$libdir", "--clean");
