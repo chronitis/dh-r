@@ -11,5 +11,5 @@ Depends: ${misc:Depends},
          r-base-dev,
          debhelper (>= 9),
          dctrl-tools
-Description: Debian helper tools for packaging Julia libraries
- Provides the julia buildsystem for debhelper.
+Description: Debian helper tools for packaging R libraries
+ Provides the R buildsystem for debhelper.
