@@ -40,6 +40,9 @@ sub parse_depends {
 
     foreach my $dep (@text) {
         chomp $dep;
+
+        # clean up possible newline or tabs in the middle of dependencies
+        $dep =~ s/[\n\t]/ /g;
         # rely on the R version format being equivalent
         $dep =~ /^([\w.]+)\s*(\([^()]*\))?$/;
         my $pkg = lc $1;
