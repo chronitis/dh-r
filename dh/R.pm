@@ -9,6 +9,7 @@ use Dpkg::Control;
 use Dpkg::Control::Info;
 use Dpkg::Changelog::Parse;
 use Debian::Debhelper::Dh_Lib;
+use Dpkg::Deps qw(deps_concat);
 use base 'Debian::Debhelper::Buildsystem';
 
 sub DESCRIPTION {
@@ -170,13 +171,14 @@ sub install {
     my %apthash;
     @apthash{@aptavail} = ();
 
-    my $rdepends = join(",", parse_depends("Depends", $desc->{Depends}, \%apthash));
-    my $rrecommends = join(",", parse_depends("Recommends", $desc->{Recommends}, \%apthash));
-    my $rsuggests = join(",", parse_depends("Suggests", $desc->{Suggests}, \%apthash));
-    my $rimports = join(",", parse_depends("Imports", $desc->{Imports}, \%apthash));
+    my $rdepends = deps_concat(parse_depends("Depends", $desc->{Depends}, \%apthash));
+    my $rrecommends = deps_concat(parse_depends("Recommends", $desc->{Recommends}, \%apthash));
+    my $rsuggests = deps_concat(parse_depends("Suggests", $desc->{Suggests}, \%apthash));
+    my $rimports = deps_concat(parse_depends("Imports", $desc->{Imports}, \%apthash));
 
     open(my $svs, ">>", "debian/$sourcepackage.substvars");
-    say $svs "R:Depends=r-base-core (>= $rbase_version), $rapi_version, $rdepends, $rimports";
+    my $depends = deps_concat("r-base-core (>= $rbase_version)", $rapi_version, $rdepends, $rimports);
+    say $svs "R:Depends=$depends";
     say $svs "R:Recommends=$rrecommends";
     say $svs "R:Suggests=$rsuggests";
     close $svs;
