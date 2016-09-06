@@ -176,8 +176,7 @@ sub install {
     my $rimports = join(",", parse_depends("Imports", $desc->{Imports}, \%apthash));
 
     open(my $svs, ">>", "debian/$sourcepackage.substvars");
-    say $svs "R:Depends=r-base-core (>= $rbase_version), $rapi_version";
-    say $svs "R:PkgDepends=$rdepends, $rimports";
+    say $svs "R:Depends=r-base-core (>= $rbase_version), $rapi_version, $rdepends, $rimports";
     say $svs "R:Recommends=$rrecommends";
     say $svs "R:Suggests=$rsuggests";
     close $svs;
