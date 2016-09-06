@@ -161,7 +161,7 @@ sub install {
     my @toremove = ("R.css", "COPYING", "COPYING.txt", "LICENSE", "LICENSE.txt");
     foreach my $rmf (@toremove) {
         if (-e "$destdir/$libdir/$desc->{Package}/$rmf") {
-            $this->doit_in_sourcedir("rm", "-vf", "$destdir/$libdir/$desc->{Package}/$rmf");
+            $this->doit_in_sourcedir("rm", "-f", "$destdir/$libdir/$desc->{Package}/$rmf");
         }
     }
 
