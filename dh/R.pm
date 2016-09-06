@@ -30,13 +30,20 @@ sub check_auto_buildable {
     return -e $this->get_sourcepath("DESCRIPTION") ? 1 : 0;
 }
 
+sub parse_description {
+    my $desc = Dpkg::Control->new(type => Dpkg::Control::CTRL_UNKNOWN);
+    $desc->load("DESCRIPTION");
+    return $desc;
+}
+
 sub parse_depends {
     # try and convert R package dependencies in DESCRIPTION into a
     # list of debian package dependencies
 
     my $field = shift;
+    my $rawtext = shift;
     my %apthash = %{shift()};
-    my @text = split(/,\s*/, qx/grep-dctrl -s $field -n . DESCRIPTION/);
+    my @text = split(/,\s*/, $rawtext);
     my @deps;
 
     foreach my $dep (@text) {
@@ -74,47 +81,38 @@ sub install {
     my $this = shift;
     my $destdir = shift;
 
-    # it would be nice to use Dpkg::Control::Info here since the
-    # format is the same, but we can't because it checks the first
-    # block contains Source: and errors when it doesn't
-    chomp(my $desc_package = qx/grep-dctrl -s Package -n . DESCRIPTION/);
-    chomp(my $desc_version = qx/grep-dctrl -s Version -n . DESCRIPTION/);
+    my $desc = parse_description(); # key-value hash for the DESCRIPTION file
+    my $srcctrl = Dpkg::Control::Info->new()->get_source();
+    my $sourcepackage = $this->sourcepackage();
 
-    say "I: R Package: $desc_package Version: $desc_version";
+
+    say "I: R Package: $desc->{Package} Version: $desc->{Version}";
 
     # Priority: Recommended should go in /library instead of /site-library
-    chomp(my $desc_priority = qx/grep-dctrl -s Priority -n . DESCRIPTION/);
-
     my $libdir = "usr/lib/R/site-library";
-    if ($desc_priority eq "Recommended") {
+    if ($desc->{Priority} eq "Recommended") {
         $libdir = "usr/lib/R/library";
-        say "I: R package with Priority: $desc_priority, installing in $libdir";
+        say "I: R package with Priority: $desc->{Priority}, installing in $libdir";
     }
-
-    # this appears to be set ("CRAN") for packages originating from CRAN,
-    # but is not set for bioconductor, nor for packages direct from upstream
-    chomp(my $desc_repo = qx/grep-dctrl -s Repository -n . DESCRIPTION/);
-
-    # however, biocViews is (presumably) only going to be set for bioconductor
-    # packages, so nonzero should identify
-    chomp(my $desc_biocviews = qx/grep-dctrl -s biocViews -n . DESCRIPTION/);
-
-    my $srcctrl = Dpkg::Control::Info->new()->get_source();
 
     my $repo = "CRAN";
     if (defined $ENV{RRepository}) {
         $repo = $ENV{RRepository};
         say "I: Using repo=$repo from env RRepository";
-    } elsif (length $desc_repo) {
-        $repo = $desc_repo;
+    } elsif (length $desc->{Repo}) {
+        # this appears to be set ("CRAN") for packages originating from CRAN,
+        # but is not set for bioconductor, nor for packages direct from upstream
+        $repo = $desc->{Repo};
         say "I: Using repo=$repo from DESCRIPTION::Repository";
-    } elsif (length $desc_biocviews) {
+    } elsif (length $desc->{biocViews}) {
+        # however, biocViews is (presumably) only going to be set for bioconductor
+        # packages, so nonzero should identify
         $repo = "BIOC";
         say "I: Using repo=$repo due to existence of DESCRIPTION::biocViews";
-    } elsif ($this->sourcepackage() =~ /^r-cran/) {
+    } elsif ($sourcepackage =~ /^r-cran/) {
         $repo = "CRAN";
         say "I: Using repo=$repo based on source package name";
-    } elsif ($this->sourcepackage() =~ /^r-bioc/) {
+    } elsif ($sourcepackage =~ /^r-bioc/) {
         $repo = "BIOC";
         say "I: Using repo=$repo based on source package name";
     } else {
@@ -124,7 +122,7 @@ sub install {
 
     # this is used to determine the install directory during build
     # TODO: check this actually matches the binary name in d/control?
-    my $debname = "r-" . lc($repo) . "-" . lc($desc_package);
+    my $debname = "r-" . lc($repo) . "-" . lc($desc->{Package});
     say "I: Using debian package name: $debname";
 
     chomp(my $rbase_version = qx/dpkg-query -W -f='\${Version}' r-base-dev/);
@@ -162,8 +160,8 @@ sub install {
 
     my @toremove = ("R.css", "COPYING", "COPYING.txt", "LICENSE", "LICENSE.txt");
     foreach my $rmf (@toremove) {
-        if (-e "$destdir/$libdir/$desc_package/$rmf") {
-            $this->doit_in_sourcedir("rm", "-vf", "$destdir/$libdir/$desc_package/$rmf");
+        if (-e "$destdir/$libdir/$desc->{Package}/$rmf") {
+            $this->doit_in_sourcedir("rm", "-vf", "$destdir/$libdir/$desc->{Package}/$rmf");
         }
     }
 
@@ -172,12 +170,11 @@ sub install {
     my %apthash;
     @apthash{@aptavail} = ();
 
-    my $rdepends = join(",", parse_depends("Depends", \%apthash));
-    my $rrecommends = join(",", parse_depends("Recommends", \%apthash));
-    my $rsuggests = join(",", parse_depends("Suggests", \%apthash));
-    my $rimports = join(",", parse_depends("Imports", \%apthash));
+    my $rdepends = join(",", parse_depends("Depends", $desc->{Depends}, \%apthash));
+    my $rrecommends = join(",", parse_depends("Recommends", $desc->{Recommends}, \%apthash));
+    my $rsuggests = join(",", parse_depends("Suggests", $desc->{Suggests}, \%apthash));
+    my $rimports = join(",", parse_depends("Imports", $desc->{Imports}, \%apthash));
 
-    my $sourcepackage = $this->sourcepackage();
     open(my $svs, ">>", "debian/$sourcepackage.substvars");
     say $svs "R:Depends=r-base-core (>= $rbase_version), $rapi_version";
     say $svs "R:PkgDepends=$rdepends, $rimports";
