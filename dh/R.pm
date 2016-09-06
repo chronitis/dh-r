@@ -5,8 +5,9 @@ package Debian::Debhelper::Buildsystem::R;
 use feature say;
 use strict;
 use Cwd;
+use Dpkg::Control;
 use Dpkg::Control::Info;
-use Dpkg::Changelog::Debian;
+use Dpkg::Changelog::Parse;
 use Debian::Debhelper::Dh_Lib;
 use base 'Debian::Debhelper::Buildsystem';
 
@@ -132,9 +133,8 @@ sub install {
     chomp(my $rapi_version = qx/dpkg-query -W -f='\${Provides}' r-base-core | grep -o 'r-api[^, ]*'/);
     say "I: R API version: $rapi_version";
 
-    chomp(my $changelog_time = qx/dpkg-parsechangelog | grep-dctrl -s Date -n ./);
+    my $changelog_time = Dpkg::Changelog::Parse::changelog_parse()->{Date};
     say "I: Using built-time from d/changelog: $changelog_time";
-
 
 
     $this->doit_in_sourcedir("mkdir", "-p", "$destdir/$libdir");
