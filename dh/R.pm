@@ -9,7 +9,7 @@ use Dpkg::Control;
 use Dpkg::Control::Info;
 use Dpkg::Changelog::Parse;
 use Debian::Debhelper::Dh_Lib;
-use Dpkg::Deps qw(deps_concat);
+use Dpkg::Deps qw(deps_concat deps_parse);
 use base 'Debian::Debhelper::Buildsystem';
 
 sub DESCRIPTION {
@@ -44,35 +44,32 @@ sub parse_depends {
     my $field = shift;
     my $rawtext = shift;
     my %apthash = %{shift()};
-    my @text = split(/,\s*/, $rawtext);
+    my @rdeps = deps_parse($rawtext)->get_deps();
     my @deps;
 
-    foreach my $dep (@text) {
-        chomp $dep;
-
-        # clean up possible newline or tabs in the middle of dependencies
-        $dep =~ s/[\n\t]/ /g;
-        # rely on the R version format being equivalent
-        $dep =~ /^([\w.]+)\s*(\([^()]*\))?$/;
-        my $pkg = lc $1;
-        my $vers = $2;
+    foreach my $d (@rdeps) {
+        my $pkg = lc $d->{package};
+        my $vers = "";
+        if (length $d->{version}) {
+            $vers = " ($d->{relation} $d->{version})";
+        }
         if ($pkg eq "r") {
             # TODO: check if the available version of R satisfies this
             # for now, discard it, since we generate R (>= curver)
-            say "W: Ignoring specified R dependency: $dep";
+            say "W: Ignoring specified R dependency: $d";
             next;
         }
 
         # check if r-cran-pkg or r-bioc-pkg exists, and add it as a
         # dependency (or recommend/suggest)
         if (exists $apthash{"r-cran-$pkg\n"}) {
-            say "I: Using r-cran-$pkg for $field:$dep";
-            push (@deps, "r-cran-$pkg $vers");
+            say "I: Using r-cran-$pkg for $field:$d";
+            push (@deps, "r-cran-$pkg$vers");
         } elsif (exists $apthash{"r-bioc-$pkg\n"}) {
-            say "I: Using r-bioc-$pkg for $field:$dep";
-            push (@deps, "r-bioc-$pkg $vers");
+            say "I: Using r-bioc-$pkg for $field:$d";
+            push (@deps, "r-bioc-$pkg$vers");
         } else {
-            say "W: Cannot find a debian package for $field:$dep";
+            say "W: Cannot find a debian package for $field:$d";
         }
     }
     return @deps;
