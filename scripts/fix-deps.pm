@@ -9,7 +9,7 @@ my $src = $ctrl->get_source();
 my $bin = $ctrl->get_pkg_by_idx(1);
 
 
-$bin->{Depends} = Dpkg::Deps::deps_concat("\${R:Depends}", "\${misc:Depends}", "\${shlib:Depends}");
+$bin->{Depends} = Dpkg::Deps::deps_concat("\${R:Depends}", "\${misc:Depends}", "\${shlibs:Depends}");
 if (defined $bin->{Recommends}) {
     $bin->{Recommends} = "\${R:Recommends}";
 }
@@ -30,5 +30,3 @@ if (! grep(/^dh-r/, @bdeps)) {
 $src->{"Build-Depends"} = Dpkg::Deps::deps_concat(@bdeps);
 
 say $ctrl->output();
-
-
