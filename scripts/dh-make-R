@@ -1,0 +1,168 @@
+#!/usr/bin/env perl
+
+use feature say;
+use strict;
+use Debian::Debhelper::Buildsystem::R qw(parse_description parse_deps get_repo);
+use Dpkg::Deps qw(deps_concat deps_parse);
+
+( -e "DESCRIPTION") or die "No DESCRIPTION file, is this an R package?";
+
+my $desc = Dpkg::Control->new(type => Dpkg::Control::CTRL_UNKNOWN);
+$desc->load("DESCRIPTION");
+
+my $repo = Debian::Debhelper::Buildsystem::R::get_repo($desc);
+my $debname = "r-" . lc $repo . "-" . lc $desc->{Package};
+say "I: Package source and binary name: $debname";
+
+my @aptavail = qx/grep-aptavail -P -s Package -n -e ^r-/;
+my %apthash;
+@apthash{@aptavail} = ();
+
+my $rdepends = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Depends", $desc->{Depends}, \%apthash));
+my $rrecommends = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Recommends", $desc->{Recommends}, \%apthash));
+my $rsuggests = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Suggests", $desc->{Suggests}, \%apthash));
+my $rimports = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Imports", $desc->{Imports}, \%apthash));
+my $builddeps = deps_concat("debhelper (>= 9)", "dh-r", "r-base-dev", $rdepends, $rimports);
+
+say "I: Package depends: $rdepends";
+say "I: Package imports: $rimports";
+say "I: Package recommends: $rrecommends";
+say "I: Package suggests: $rsuggests";
+say "I: Package build-depends: $builddeps";
+
+my $year = 1900 + (localtime)[5];
+my $compiled = lc $desc->{NeedsCompilation} eq "yes";
+my $arch =  $compiled ? "any" : "all";
+if ($compiled) {
+    say "W: This package NeedsCompilation: there are probably extra dependencies required";
+    say "W: Package SystemRequirements: '$desc->{SystemRequirements}'";
+}
+
+my $homepage = "";
+if ($repo eq "CRAN") {
+    $homepage = "https://cran.r-project.org/web/packages/$desc->{Package}/";
+} elsif ($repo eq "BIOC") {
+    $homepage = "http://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html";
+}
+
+if (! -d "debian" ) {
+    mkdir "debian";
+    mkdir "debian/source";
+    say "I: Creating debian/";
+}
+
+my $dcontrol = <<"EOF";
+Source: $debname
+Section: gnu-r
+Priority: optional
+Maintainer: Debian Science Maintainers <debian-science-maintainers\@lists.alioth.debian.org>
+Uploaders: $ENV{DEBFULLNAME} <$ENV{DEBEMAIL}>
+Build-Depends: $builddeps
+Standards-Version: 3.9.8
+Homepage: $homepage
+Vcs-Browser: https://anonscm.debian.org/git/debian-science/packages/$debname.git
+Vcs-Git: https://anonscm.debian.org/git/debian-science/packages/$debname.git
+
+Package: $debname
+Architecture: $arch
+Depends: \${R:Depends}, \${shlibs:Depends}, \${misc:Depends}
+Recommends: \${R:Recommends}
+Suggests: \${R:Suggests}
+Description: $desc->{Title}
+ $desc->{Description}
+EOF
+
+
+if ( -e "debian/control") {
+    say "W: debian/control already exists, not rewriting";
+} else {
+    open (my $fctrl, ">", "debian/control");
+    say $fctrl $dcontrol;
+    close $fctrl;
+    say "I: Writing debian/control";
+}
+
+if ( -e "debian/compat") {
+    say "W: debian/compat already exists, not rewriting";
+} else {
+    open (my $fcp, ">", "debian/compat");
+    say $fcp "9";
+    close $fcp;
+    say "I: Writing debian/compat";
+}
+
+if ( -e "debian/source/format") {
+    say "W: debian/source/format already exists, not rewriting";
+} else {
+    open (my $fsf, ">", "debian/source/format");
+    say $fsf "3.0 (quilt)";
+    close $fsf;
+    say "I: Writing debian/source/format";
+}
+
+my $drules = <<"EOF";
+#!/usr/bin/make -f
+
+%:
+\tdh \$\@ --buildsystem R
+EOF
+
+if ( -e "debian/rules") {
+    say "W: debian/rules already exists, not rewriting";
+} else {
+    open (my $fr, ">", "debian/rules");
+    say $fr $drules;
+    close $fr;
+    chmod 0755, "debian/rules";
+    say "I: Writing debian/rules";
+}
+
+my $dwatch = "";
+if ($repo eq "CRAN") {
+    $dwatch = "version=4\nhttps://cran.r-project.org/src/contrib/" . $desc->{Package} . '_([-\d.]*)\.tar\.gz';
+} elsif ($repo eq "BIOC") {
+    $dwatch = "version=4\n" . 'opts=downloadurlmangle=s?^(.*)\.\.?http:$1packages/release/bioc? \\' . "\nhttp://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html .*/$desc->{Package}_(.*).tar.gz";
+}
+
+if ( -e "debian/watch") {
+    say "W: debian/watch already exists, not rewriting";
+} else {
+    open (my $fw, ">", "debian/watch");
+    say $fw $dwatch;
+    close $fw;
+    say "I: Writing debian/watch";
+}
+
+my $dcopy = <<"EOF";
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: $desc->{Package}
+
+Files: *
+Copyright: $desc->{Author}
+License: $desc->{License}
+Comment: $desc->{Copyright}
+
+Files: debian/*
+Copyright: $year $ENV{DEBFULLNAME} <$ENV{DEBEMAIL}>
+License: $desc->{License}
+Comment: Same license as upstream package
+
+License: $desc->{License}
+  TODO: insert the appropriate license text
+EOF
+
+if ( -e "debian/copyright") {
+    say "W: debian/copyright already exists, not rewriting";
+} else {
+    open (my $fcc, ">", "debian/copyright");
+    say $fcc $dcopy;
+    close $fcc;
+    say "I: Writing debian/copyright";
+}
+
+if ( -e "debian/changelog") {
+    say "W: debian/changelog already exists, not rewriting";
+} else {
+    qx/dch --create --package $debname -v $desc->{Version}-1 "Initial release (closes: #xxxxxx)"/;
+    say "I: Writing debian/changelog";
+}
