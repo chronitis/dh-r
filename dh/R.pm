@@ -69,7 +69,18 @@ sub parse_depends {
     my @rdeps = deps_parse($rawtext)->get_deps();
     my @deps;
 
+    # r namespaces included in r-base-core which we shouldn't try and
+    # generate dependencies for
+    my %builtins;
+    @builtins{qw/base compiler datasets grDevices graphics grid methods
+                 parallel splines stats tcltk tools translations utils/} = ();
+
     foreach my $d (@rdeps) {
+        if (exists $builtins{$d->{package}}) {
+            # ignore dependencies on built-in namespaces
+            next;
+        }
+
         my $pkg = lc $d->{package};
         my $vers = "";
         if (length $d->{version}) {
