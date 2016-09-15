@@ -1,0 +1,11 @@
+#!/bin/sh -e
+# Build and install R vignettes, for use with dh --buildsystem R
+
+mkdir -p inst/doc
+
+LC_ALL=C R --no-save <<EOR
+    tools::buildVignettes(dir=".", tangle=TRUE, quiet=TRUE)
+    v <- tools::pkgVignettes(dir=".", output=TRUE, source=TRUE)
+    f <- c(v[["outputs"]], v[["docs"]], unlist(v[["sources"]], use.names=FALSE))
+    invisible(file.copy(f, "inst/doc"))
+EOR
