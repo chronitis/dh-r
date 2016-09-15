@@ -8,6 +8,21 @@ use Dpkg::Deps qw(deps_concat deps_parse);
 use Getopt::Long;
 use Pod::Usage;
 
+sub maybe_write {
+    my $fname = shift;
+    my $content = shift;
+    if ( -e $fname ) {
+        say "W: $fname already exists, not rewriting";
+        return 0;
+    } else {
+        open(my $fh, ">", $fname);
+        say $fh $content;
+        close $fh;
+        say "I: writing $fname";
+        return 1;
+    }
+}
+
 
 my $opt_team = '';
 my $opt_repo = '';
@@ -119,33 +134,9 @@ Description: $desc->{Title}
 $longdesc
 EOF
 
-
-if ( -e "debian/control") {
-    say "W: debian/control already exists, not rewriting";
-} else {
-    open (my $fctrl, ">", "debian/control");
-    say $fctrl $dcontrol;
-    close $fctrl;
-    say "I: Writing debian/control";
-}
-
-if ( -e "debian/compat") {
-    say "W: debian/compat already exists, not rewriting";
-} else {
-    open (my $fcp, ">", "debian/compat");
-    say $fcp "9";
-    close $fcp;
-    say "I: Writing debian/compat";
-}
-
-if ( -e "debian/source/format") {
-    say "W: debian/source/format already exists, not rewriting";
-} else {
-    open (my $fsf, ">", "debian/source/format");
-    say $fsf "3.0 (quilt)";
-    close $fsf;
-    say "I: Writing debian/source/format";
-}
+maybe_write("debian/control", $dcontrol);
+maybe_write("debian/compat", "9");
+maybe_write("debian/source/format", "3.0 (quilt)");
 
 my $drules = <<"EOF";
 #!/usr/bin/make -f
@@ -154,15 +145,8 @@ my $drules = <<"EOF";
 \tdh \$\@ --buildsystem R
 EOF
 
-if ( -e "debian/rules") {
-    say "W: debian/rules already exists, not rewriting";
-} else {
-    open (my $fr, ">", "debian/rules");
-    say $fr $drules;
-    close $fr;
-    chmod 0755, "debian/rules";
-    say "I: Writing debian/rules";
-}
+maybe_write("debian/rules", $drules);
+chmod 0755, "debian/rules";
 
 my $dwatch = "";
 if ($repo eq "CRAN") {
@@ -171,14 +155,7 @@ if ($repo eq "CRAN") {
     $dwatch = "version=4\n" . 'opts=downloadurlmangle=s?^(.*)\.\.?http:$1packages/release/bioc? \\' . "\nhttp://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html .*/$desc->{Package}_(.*).tar.gz";
 }
 
-if ( -e "debian/watch") {
-    say "W: debian/watch already exists, not rewriting";
-} else {
-    open (my $fw, ">", "debian/watch");
-    say $fw $dwatch;
-    close $fw;
-    say "I: Writing debian/watch";
-}
+maybe_write("debian/watch", $dwatch);
 
 my $dcopy = <<"EOF";
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -198,14 +175,7 @@ License: $desc->{License}
   TODO: insert the appropriate license text
 EOF
 
-if ( -e "debian/copyright") {
-    say "W: debian/copyright already exists, not rewriting";
-} else {
-    open (my $fcc, ">", "debian/copyright");
-    say $fcc $dcopy;
-    close $fcc;
-    say "I: Writing debian/copyright";
-}
+maybe_write("debian/copyright", $dcopy);
 
 if ( -e "debian/changelog") {
     say "W: debian/changelog already exists, not rewriting";
