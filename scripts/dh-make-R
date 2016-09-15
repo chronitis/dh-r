@@ -27,8 +27,10 @@ sub maybe_write {
 my $opt_team = '';
 my $opt_repo = '';
 my $opt_help = 0;
+my $opt_tests = '';
 
-GetOptions('team=s' => \$opt_team, 'repo=s' => \$opt_repo, 'help|?' => \$opt_help);
+GetOptions('team=s' => \$opt_team, 'repo=s' => \$opt_repo,
+           'help|?' => \$opt_help, 'tests=s' => \$opt_tests);
 pod2usage(1) if $opt_help;
 
 ( -e "DESCRIPTION") or die "No DESCRIPTION file, is this an R package?";
@@ -110,6 +112,7 @@ if ($opt_team eq "science") {
 if (! -d "debian" ) {
     mkdir "debian";
     mkdir "debian/source";
+    mkdir "debian/tests";
     say "I: Creating debian/";
 }
 
@@ -184,6 +187,92 @@ if ( -e "debian/changelog") {
     say "I: Writing debian/changelog";
 }
 
+my $test_generic = <<'EOF';
+#!/bin/sh -e
+
+for testfile in tests/*.R; do
+    echo "BEGIN TEST $testfile"
+    LC_ALL=C R --no-save < $testfile
+done
+EOF
+
+my $test_run_unit_test = <<"EOF";
+#!/bin/sh -e
+
+pkgname=$desc->{Package}
+debname=$debname
+
+if [ \$ADTTMP = "" ] ; then
+    ADTTMP=`mktemp -d /tmp/\${debname}-test.XXXXXX`
+fi
+cd \$ADTTMP
+cp -a /usr/share/doc/\$debname/tests/* \$ADTTMP
+gunzip -r *
+for testfile in *.R; do
+    echo "BEGIN TEST \$testfile"
+    LC_ALL=C R --no-save < \$testfile
+done
+rm -rf \$ADTTMP/*
+EOF
+
+my $test_bioc = <<"EOF";
+#!/bin/sh -e
+
+LC_ALL=C R --no-save -e 'BiocGenerics:::testPackage("$desc->{Package}")'
+EOF
+
+my $test_vignette = <<"EOF";
+#!/bin/sh -e
+
+for vignette in \$(find vignettes -iname '*.rnw' -or -iname '*.rmd'); do
+    echo "BEGIN VIGNETTE \$vignette"
+    LC_ALL=C R CMD Sweave \$vignette
+done
+EOF
+
+my %autopkgtests;
+
+# detect common test dependencies
+my $testpkgs = "@,";
+if ($rsuggests =~ /testthat/) {
+    $testpkgs .= " r-cran-testthat,";
+}
+if ($rsuggests =~ /runit/) {
+    $testpkgs .= " r-cran-runit,";
+}
+
+if ($opt_tests =~ /generic/) {
+    maybe_write("debian/tests/generic", $test_generic);
+    $autopkgtests{"generic"} = $testpkgs;
+}
+if ($opt_tests =~ /run-unit-test/) {
+    maybe_write("debian/tests/run-unit-test", $test_run_unit_test);
+    maybe_write("debian/$debname.docs", "debian/tests/run-unit-test\ntests");
+    $autopkgtests{"run-unit-test"} = $testpkgs;
+}
+if ($opt_tests =~ /bioc/) {
+    maybe_write("debian/tests/bioc", $test_bioc);
+    $autopkgtests{"bioc"} = $testpkgs . " r-bioc-biocgenerics";
+}
+if ($opt_tests =~ /vignette/) {
+    maybe_write("debian/tests/vignette", $test_vignette);
+    if ($rsuggests =~ /knitr/) {
+        $autopkgtests{"vignette"} = "@, r-cran-knitr";
+    } else {
+        $autopkgtests{"vignette"} = "@";
+    }
+}
+
+my $testcontrol = "";
+foreach my $key (keys %autopkgtests) {
+    $testcontrol .= "Tests: $key\n";
+    $testcontrol .= "Depends: $autopkgtests{$key}\n";
+    $testcontrol .= "Restrictions: allow-stderr\n\n";
+}
+
+maybe_write("debian/tests/control", $testcontrol);
+
+
 __END__
 
 =head1 NAME
@@ -196,8 +285,9 @@ dh-make-R [options]
 
  Options:
     --help
-    --team TEAM    Set packaging team
-    --repo REPO    Override R repository detection
+    --team TEAM          Set packaging team
+    --repo REPO          Override R repository detection
+    --tests TEST1,TEST2  Generate autopkgtest templates
 
 =head1 OPTIONS
 
@@ -216,6 +306,13 @@ respectively.
 =item B<--repo>
 
 Set the R repository (used in the package name), overriding automatic detection.
+
+=item B<--tests>
+
+Comma-separated list of test templates to generate. Understood values are
+"generic" (run tests/*.R), "run-unit-test" (installs tests as documentation,
+can be run outside autopkgtest), "bioc" (runs BiocGenerics::testPackage) and
+"vignette" (attempts to rebuild documentation).
 
 =back
 
