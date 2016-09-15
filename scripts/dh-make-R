@@ -2,7 +2,8 @@
 
 use feature say;
 use strict;
-use Debian::Debhelper::Buildsystem::R qw(parse_description parse_deps get_repo);
+use Debian::Debhelper::Buildsystem::R qw(parse_deps);
+use Dpkg::Control;
 use Dpkg::Deps qw(deps_concat deps_parse);
 
 ( -e "DESCRIPTION") or die "No DESCRIPTION file, is this an R package?";
@@ -10,7 +11,24 @@ use Dpkg::Deps qw(deps_concat deps_parse);
 my $desc = Dpkg::Control->new(type => Dpkg::Control::CTRL_UNKNOWN);
 $desc->load("DESCRIPTION");
 
-my $repo = Debian::Debhelper::Buildsystem::R::get_repo($desc);
+my $repo = "CRAN";
+if ($opt_repo) {
+    $repo = $opt_repo;
+    say "I: Using repo=$repo from --repo";
+} elsif (length $desc->{Repo}) {
+    # this appears to be set ("CRAN") for packages originating from CRAN,
+    # but is not set for bioconductor, nor for packages direct from upstream
+    $repo = $desc->{Repo};
+    say "I: Using repo=$repo from DESCRIPTION::Repository";
+} elsif (length $desc->{biocViews}) {
+    # however, biocViews is (presumably) only going to be set for bioconductor
+    # packages, so nonzero should identify
+    $repo = "BIOC";
+    say "I: Using repo=$repo due to existence of DESCRIPTION::biocViews";
+} else {
+    say "I: Using repo=$repo by default";
+}
+
 my $debname = "r-" . lc $repo . "-" . lc $desc->{Package};
 say "I: Package source and binary name: $debname";
 
