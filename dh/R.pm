@@ -37,28 +37,6 @@ sub parse_description {
     return $desc;
 }
 
-sub get_repo {
-    my $desc = shift;
-    my $repo = "CRAN";
-    if (defined $ENV{RREPOSITORY}) {
-        $repo = $ENV{RREPOSITORY};
-        say "I: Using repo=$repo from env RREPOSITORY";
-    } elsif (length $desc->{Repo}) {
-        # this appears to be set ("CRAN") for packages originating from CRAN,
-        # but is not set for bioconductor, nor for packages direct from upstream
-        $repo = $desc->{Repo};
-        say "I: Using repo=$repo from DESCRIPTION::Repository";
-    } elsif (length $desc->{biocViews}) {
-        # however, biocViews is (presumably) only going to be set for bioconductor
-        # packages, so nonzero should identify
-        $repo = "BIOC";
-        say "I: Using repo=$repo due to existence of DESCRIPTION::biocViews";
-    } else {
-        say "I: Using repo=$repo by default";
-    }
-    return $repo;
-}
-
 sub parse_depends {
     # try and convert R package dependencies in DESCRIPTION into a
     # list of debian package dependencies
@@ -125,16 +103,6 @@ sub install {
         $libdir = "usr/lib/R/library";
         say "I: R package with Priority: $desc->{Priority}, installing in $libdir";
     }
-
-    my $repo = get_repo($desc);
-
-
-    # this is used to determine the install directory during build
-    # TODO: check this actually matches the binary name in d/control?
-    my $debname = "r-" . lc($repo) . "-" . lc($desc->{Package});
-    say "I: Using debian package name: $debname";
-    # we don't actually need to know this here since we're already supplied
-    # with the correct destination dir
 
     chomp(my $rbase_version = qx/dpkg-query -W -f='\${Version}' r-base-dev/);
     say "I: Building using R version $rbase_version";
