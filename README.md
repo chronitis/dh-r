@@ -11,6 +11,8 @@
     dh $@ --buildsystem R
 ```
 
+Optionally, you can request vignettes be built by adding `--with vignette`, but note that `r-base-dev` does not depend on a `LaTeX` installation, and you will need to explicitly add at least `texlive` and `texinfo` in addition to any R packages required.
+
 ### Features
 
 `dh-r` should provide parity with the existing CDBS macro (`/usr/share/R/debian/r-cran.mk`) - choosing the correct library directory, setting the build timestamp from the changelog, generating `r-base-core` and `r-api-VERSION` dependencies and cleaning up some extraneous files.
