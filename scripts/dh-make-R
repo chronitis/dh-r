@@ -5,9 +5,18 @@ use strict;
 use Debian::Debhelper::Buildsystem::R qw(parse_deps);
 use Dpkg::Control;
 use Dpkg::Deps qw(deps_concat deps_parse);
+use Getopt::Long;
+use Pod::Usage;
+
+
+my $opt_team = '';
+my $opt_repo = '';
+my $opt_help = 0;
+
+GetOptions('team=s' => \$opt_team, 'repo=s' => \$opt_repo, 'help|?' => \$opt_help);
+pod2usage(1) if $opt_help;
 
 ( -e "DESCRIPTION") or die "No DESCRIPTION file, is this an R package?";
-
 my $desc = Dpkg::Control->new(type => Dpkg::Control::CTRL_UNKNOWN);
 $desc->load("DESCRIPTION");
 
@@ -66,6 +75,23 @@ if ($repo eq "CRAN") {
     $homepage = "http://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html";
 }
 
+my $maintainer = "$ENV{DEBFULLNAME} <$ENV{DEBEMAIL}>";
+my $uploaders = "";
+my $vcs = "";
+
+if ($opt_team eq "science") {
+    say "I: Generating maintainers, uploaders, VCS entries for debian-science team";
+    $uploaders = $maintainer;
+    $maintainer = "Debian Science Maintainers <debian-science-maintainers\@lists.alioth.debian.org>";
+    $vcs = "https://anonscm.debian.org/git/debian-science/packages/$debname.git";
+} elsif ($opt_team eq "med") {
+    say "I: Generating maintainers, uploaders, VCS entries for debian-med team";
+    $uploaders = $maintainer;
+    $maintainer = "Debian Med Packaging Team <debian-med-packaging\@lists.alioth.debian.org>";
+    $vcs = "https://anonscm.debian.org/git/debian-med/$debname.git"
+}
+
+
 if (! -d "debian" ) {
     mkdir "debian";
     mkdir "debian/source";
@@ -76,13 +102,13 @@ my $dcontrol = <<"EOF";
 Source: $debname
 Section: gnu-r
 Priority: optional
-Maintainer: Debian Science Maintainers <debian-science-maintainers\@lists.alioth.debian.org>
-Uploaders: $ENV{DEBFULLNAME} <$ENV{DEBEMAIL}>
+Maintainer: $maintainer
+Uploaders: $uploaders
 Build-Depends: $builddeps
 Standards-Version: 3.9.8
 Homepage: $homepage
-Vcs-Browser: https://anonscm.debian.org/git/debian-science/packages/$debname.git
-Vcs-Git: https://anonscm.debian.org/git/debian-science/packages/$debname.git
+Vcs-Browser: $vcs
+Vcs-Git: $vcs
 
 Package: $debname
 Architecture: $arch
@@ -187,3 +213,44 @@ if ( -e "debian/changelog") {
     qx/dch --create --package $debname -v $desc->{Version}-1 "Initial release (closes: #xxxxxx)"/;
     say "I: Writing debian/changelog";
 }
+
+__END__
+
+=head1 NAME
+
+dh-make-R - Generates a debian/ directory skeleton for R packages
+
+=head1 SYNOPSIS
+
+dh-make-R [options]
+
+ Options:
+    --help
+    --team TEAM    Set packaging team
+    --repo REPO    Override R repository detection
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--help>
+
+Print this help message.
+
+=item B<--team>
+
+Generate default maintainer, uploaders, VCS URLs for the given packaging team.
+Understood values are "science" and "med" for debian-science and debian-med
+respectively.
+
+=item B<--repo>
+
+Set the R repository (used in the package name), overriding automatic detection.
+
+=back
+
+=head1 DESCRIPTION
+
+B<dh-make-R> should be run from the root of an unpacked R tarball (ie, the
+directory containing DESCRIPTION). Values from this are used to generate
+default control, compat, copyright, rules, source/format and watch files.
