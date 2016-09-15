@@ -1,3 +1,3 @@
 dh/R.pm usr/share/perl5/Debian/Debhelper/Buildsystem
-scripts/fix-deps.pm usr/share/dh-r
+scripts/convert-to-dh-r usr/share/dh-r
 scripts/dh-make-R usr/bin

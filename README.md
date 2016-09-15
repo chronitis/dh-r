@@ -24,4 +24,4 @@ In addition:
 
 Build and install currently happens entirely during the debhelper `install` step (since `R CMD INSTALL` performs both as a single operation).
 
-The `fix-deps.pm` script reads an existing `debian/control` and outputs a new one to `stdout`, swapping `cdbs` for `dh-r` in `Build-Depends` and replacing binary package `Depends`, `Recommends` and `Suggests` with substvar versions. If there are depedencies apart from R and shlibs-detectable libraries they will need to be re-added.
+The `convert-to-dh-r` script reads an existing `debian/control` and outputs a new one to `stdout`, swapping `cdbs` for `dh-r` in `Build-Depends` and replacing binary package `Depends`, `Recommends` and `Suggests` with substvar versions. If there are depedencies apart from R and shlibs-detectable libraries they will need to be re-added.
