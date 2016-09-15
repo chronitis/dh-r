@@ -56,6 +56,9 @@ if ($compiled) {
     say "W: Package SystemRequirements: '$desc->{SystemRequirements}'";
 }
 
+my $longdesc = $desc->{Description};
+$longdesc =~ s/^\s*/ /gm;
+
 my $homepage = "";
 if ($repo eq "CRAN") {
     $homepage = "https://cran.r-project.org/web/packages/$desc->{Package}/";
@@ -87,7 +90,7 @@ Depends: \${R:Depends}, \${shlibs:Depends}, \${misc:Depends}
 Recommends: \${R:Recommends}
 Suggests: \${R:Suggests}
 Description: $desc->{Title}
- $desc->{Description}
+$longdesc
 EOF
 
 
