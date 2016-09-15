@@ -116,15 +116,6 @@ sub install {
     $this->doit_in_sourcedir("mkdir", "-p", "$destdir/$libdir");
 
     my @instargs;
-    if (defined $ENV{RMakeFlags}) {
-        say "I: Using MAKEFLAGS=" . $ENV{RMakeFlags};
-        push (@instargs, "MAKEFLAGS=" . $ENV{RMakeFlags});
-    } else {
-        chomp(my $ldflags = qx/dpkg-buildflags --get LDFLAGS/);
-        $ldflags =~ s/ /\\ /g;
-        $ENV{MAKEFLAGS} = "'LDFLAGS=$ldflags'";
-        say "I: Using MAKEFLAGS=$ENV{MAKEFLAGS}";
-    }
 
     push (@instargs, "R", "CMD", "INSTALL", "-l", "$destdir/$libdir", "--clean");
     if (defined $ENV{RExtraInstallFlags}) {
