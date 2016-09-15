@@ -1,3 +1,13 @@
+#!/usr/bin/env perl
+
+# This script attempts to convert the dependencies of an existing R package
+# from using CDBS to use dh-r.
+# It should be run from the root of an R package, and will write a new
+# d/control file to stdout.
+# Note that this completely replaces the existing binary Depends, Recommends,
+# Suggests with substvar versions - if your package has dependencies which
+# are not either shlibs or R then they will be lost!
+
 use feature say;
 use strict;
 
@@ -9,7 +19,7 @@ my $src = $ctrl->get_source();
 my $bin = $ctrl->get_pkg_by_idx(1);
 
 
-$bin->{Depends} = Dpkg::Deps::deps_concat("\${R:Depends}", "\${misc:Depends}", "\${shlibs:Depends}");
+$bin->{Depends} = "\${R:Depends}, \${misc:Depends}, \${shlibs:Depends}";
 if (defined $bin->{Recommends}) {
     $bin->{Recommends} = "\${R:Recommends}";
 }
