@@ -1,5 +1,5 @@
-dh-r (20160901) unstable; urgency=medium
+dh-r (20160916) unstable; urgency=medium
 
-  * Initial release.
+  * Initial release (closes: #837953)
 
- -- Gordon Ball <gordon@chronitis.net>  Thu, 01 Sep 2016 16:27:35 +0200
+ -- Gordon Ball <gordon@chronitis.net>  Fri, 16 Sep 2016 11:25:42 +0200
