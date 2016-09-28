@@ -89,7 +89,7 @@ my $homepage = "";
 if ($repo eq "CRAN") {
     $homepage = "https://cran.r-project.org/package=$desc->{Package}";
 } elsif ($repo eq "BIOC") {
-    $homepage = "http://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html";
+    $homepage = "https://bioconductor.org/packages/$desc->{Package}/";
 }
 
 my $maintainer = "$ENV{DEBFULLNAME} <$ENV{DEBEMAIL}>";
