@@ -87,7 +87,7 @@ $longdesc =~ s/^\s*/ /gm;
 
 my $homepage = "";
 if ($repo eq "CRAN") {
-    $homepage = "https://cran.r-project.org/web/packages/$desc->{Package}/";
+    $homepage = "https://cran.r-project.org/package=$desc->{Package}";
 } elsif ($repo eq "BIOC") {
     $homepage = "http://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html";
 }
