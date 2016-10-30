@@ -163,6 +163,8 @@ maybe_write("debian/watch", $dwatch);
 my $dcopy = <<"EOF";
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: $desc->{Package}
+Upstream-Contact: $desc->{Maintainer}
+Source: $homepage
 
 Files: *
 Copyright: $desc->{Author}

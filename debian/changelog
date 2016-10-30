@@ -1,3 +1,12 @@
+dh-r (20161030) UNRELEASED; urgency=medium
+
+  * Team upload.
+  * dh-make-R:
+    -d/control: Switch to the canonical URL of CRAN and Bioconductor
+    -d/copyright: Add the Upstream-Contact and Source fields
+
+ -- Dylan Aïssi <bob.dybian@gmail.com>  Sun, 30 Oct 2016 22:37:22 +0100
+
 dh-r (20160916) unstable; urgency=medium
 
   * Initial release (closes: #837953)
