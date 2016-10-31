@@ -155,7 +155,7 @@ my $dwatch = "";
 if ($repo eq "CRAN") {
     $dwatch = "version=4\nhttps://cran.r-project.org/src/contrib/" . $desc->{Package} . '_([-\d.]*)\.tar\.gz';
 } elsif ($repo eq "BIOC") {
-    $dwatch = "version=4\n" . 'opts=downloadurlmangle=s?^(.*)\.\.?http:$1packages/release/bioc? \\' . "\nhttp://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html .*/$desc->{Package}_(.*).tar.gz";
+    $dwatch = "version=4\n" . 'opts=downloadurlmangle=s?^(.*)\.\.?https:$1packages/release/bioc? \\' . "\nhttps://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html .*/$desc->{Package}_(.*).tar.gz";
 }
 
 maybe_write("debian/watch", $dwatch);

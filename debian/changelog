@@ -1,9 +1,10 @@
-dh-r (20161030) UNRELEASED; urgency=medium
+dh-r (20161031) UNRELEASED; urgency=medium
 
   * Team upload.
   * dh-make-R:
     -d/control: Switch to the canonical URL of CRAN and Bioconductor
     -d/copyright: Add the Upstream-Contact and Source fields
+    -d/watch: Switch to HTTPS for the Bioconductor link
 
  -- Dylan Aïssi <bob.dybian@gmail.com>  Sun, 30 Oct 2016 22:37:22 +0100
 
