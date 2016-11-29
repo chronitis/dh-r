@@ -66,7 +66,12 @@ my $rdepends = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Dep
 my $rrecommends = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Recommends", $desc->{Recommends}, \%apthash));
 my $rsuggests = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Suggests", $desc->{Suggests}, \%apthash));
 my $rimports = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Imports", $desc->{Imports}, \%apthash));
-my $builddeps = deps_concat("debhelper (>= 9)", "dh-r", "r-base-dev", $rdepends, $rimports);
+my $builddeps;
+if ( $rdepends ) {
+    $builddeps = deps_concat("debhelper (>= 9)", "dh-r", "r-base-dev", $rdepends, $rimports);
+} else {
+    $builddeps = deps_concat("debhelper (>= 9)", "dh-r", "r-base-dev", $rimports);
+}
 
 say "I: Package depends: $rdepends";
 say "I: Package imports: $rimports";
