@@ -3,7 +3,7 @@ Section: science
 Priority: optional
 Maintainer: Debian Science Maintainers <debian-science-maintainers@lists.alioth.debian.org>
 Uploaders: Gordon Ball <gordon@chronitis.net>
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 10)
 Standards-Version: 3.9.8
 Vcs-Git: https://anonscm.debian.org/git/debian-science/packages/dh-r.git
 Vcs-Browser: https://anonscm.debian.org/git/debian-science/packages/dh-r.git
