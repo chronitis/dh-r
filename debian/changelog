@@ -8,6 +8,7 @@ dh-r (20161031) UNRELEASED; urgency=medium
     -d/control: Make sure no empty package is injected inbetween ', ,'
                 in case of empty $rdepends
      Closes: #846239
+    -d/control: create debhelper 10 control files
 
  -- Dylan Aïssi <bob.dybian@gmail.com>  Sun, 30 Oct 2016 22:37:22 +0100
 
