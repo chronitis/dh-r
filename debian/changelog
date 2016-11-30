@@ -1,10 +1,14 @@
 dh-r (20161031) UNRELEASED; urgency=medium
 
+  [ Dylan Aïssi ]
   * Team upload.
   * dh-make-R:
     -d/control: Switch to the canonical URL of CRAN and Bioconductor
     -d/copyright: Add the Upstream-Contact and Source fields
     -d/watch: Switch to HTTPS for the Bioconductor link
+
+  [ Andreas Tille ]
+  * dh-make-R:
     -d/control: Make sure no empty package is injected inbetween ', ,'
                 in case of empty $rdepends
      Closes: #846239
