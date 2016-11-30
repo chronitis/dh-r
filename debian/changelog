@@ -1,7 +1,8 @@
-dh-r (20161031) UNRELEASED; urgency=medium
+dh-r (20161130) unstable; urgency=medium
+
+  * Team upload.
 
   [ Dylan Aïssi ]
-  * Team upload.
   * dh-make-R:
     -d/control: Switch to the canonical URL of CRAN and Bioconductor
     -d/copyright: Add the Upstream-Contact and Source fields
@@ -15,7 +16,7 @@ dh-r (20161031) UNRELEASED; urgency=medium
     -d/control: create debhelper 10 control files
   * debhelper 10
 
- -- Dylan Aïssi <bob.dybian@gmail.com>  Sun, 30 Oct 2016 22:37:22 +0100
+ -- Andreas Tille <tille@debian.org>  Wed, 30 Nov 2016 15:16:08 +0100
 
 dh-r (20160916) unstable; urgency=medium
 
