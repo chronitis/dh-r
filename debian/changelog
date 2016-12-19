@@ -2,6 +2,7 @@ dh-r (20161219) UNRELEASED; urgency=medium
 
   * Team upload
   * Add manpage for dh-make-R
+  * Use suggested debci method to cleanup after testing
 
  -- Andreas Tille <tille@debian.org>  Mon, 19 Dec 2016 09:17:52 +0100
 
