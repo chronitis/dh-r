@@ -1,3 +1,9 @@
+dh-r (20161220) UNRELEASED; urgency=medium
+
+  * dh-make-R: Vcs-Git != Vcs-Browser
+
+ -- Andreas Tille <tille@debian.org>  Mon, 16 Jan 2017 16:48:10 +0100
+
 dh-r (20161219) unstable; urgency=medium
 
   * Team upload
