@@ -1,6 +1,11 @@
-dh-r (20161220) UNRELEASED; urgency=medium
+dh-r (20170929) UNRELEASED; urgency=medium
 
+  [ Andreas Tille ]
   * dh-make-R: Vcs-Git != Vcs-Browser
+
+  [ Gordon Ball ]
+  * Standards-Version: 4.1.1 (both for this package, and packaging
+    generated using dh-make-R)
 
  -- Andreas Tille <tille@debian.org>  Mon, 16 Jan 2017 16:48:10 +0100
 
