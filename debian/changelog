@@ -6,6 +6,10 @@ dh-r (20170929) UNRELEASED; urgency=medium
   [ Gordon Ball ]
   * Standards-Version: 4.1.1 (both for this package, and packaging
     generated using dh-make-R)
+  * Packages generated with dh-make-R now automatically include
+    Testsuite: autopkgtest-pkg-r, which should enable an autodep8
+    namespace-can-be-imported test. This will be ignored if
+    d/tests/control is present defining some other test(s).
 
  -- Andreas Tille <tille@debian.org>  Mon, 16 Jan 2017 16:48:10 +0100
 
