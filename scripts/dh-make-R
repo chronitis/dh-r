@@ -175,7 +175,7 @@ Upstream-Contact: $desc->{Maintainer}
 Source: $homepage
 
 Files: *
-Copyright: $desc->{Author}
+Copyright: (TODO: year) $desc->{Author}
 License: $desc->{License}
 Comment: $desc->{Copyright}
 
