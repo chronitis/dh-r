@@ -212,12 +212,8 @@ my $test_run_unit_test = <<"EOF";
 pkgname=$desc->{Package}
 debname=$debname
 
-if [ "\$ADTTMP" = "" ] ; then
-    ADTTMP=`mktemp -d /tmp/\${debname}-test.XXXXXX`
-    trap "rm -rf \$ADTTMP" 0 INT QUIT ABRT PIPE TERM
-fi
-cd \$ADTTMP
-cp -a /usr/share/doc/\$debname/tests/* \$ADTTMP
+cd \$AUTOPKGTEST_TMP
+cp -a /usr/share/doc/\$debname/tests/* \$AUTOPKGTEST_TMP
 gunzip -r *
 for testfile in *.R; do
     echo "BEGIN TEST \$testfile"
