@@ -175,7 +175,7 @@ Upstream-Contact: $desc->{Maintainer}
 Source: $homepage
 
 Files: *
-Copyright: (TODO: year) $desc->{Author}
+Copyright: (FIXME: year) $desc->{Author}
 License: $desc->{License}
 Comment: $desc->{Copyright}
 
@@ -185,7 +185,7 @@ License: $desc->{License}
 Comment: Same license as upstream package
 
 License: $desc->{License}
-  TODO: insert the appropriate license text
+  FIXME: insert the appropriate license text
 EOF
 
 maybe_write("debian/copyright", $dcopy);
