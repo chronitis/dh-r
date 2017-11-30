@@ -18,7 +18,7 @@ dh-r (20171130) UNRELEASED; urgency=medium
     namespace-can-be-imported test. This will be ignored if
     d/tests/control is present defining some other test(s).
   * Add script dh-update-R, which updates some fields in d/control
-    after a new R tarball has been imported
+    after a new R tarball has been imported (closes: #881318)
 
  -- Gordon Ball <gordon@chronitis.net>  Thu, 30 Nov 2017 16:01:47 +0000
 
