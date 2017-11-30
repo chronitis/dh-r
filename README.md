@@ -21,6 +21,7 @@ In addition:
 
  * R packages already available in the archive are automatically detected and included in the `${R:Depends}`, `${R:Recommends}` and `${R:Suggests}` substvars
  * Script `dh-make-R` generates a `debian/` skeleton from an extracted R package tarball
+ * Script `dh-update-R` updates `debian/control` (particularly `Build-Depends`) after importing a new R tarball
 
 ### Notes
 

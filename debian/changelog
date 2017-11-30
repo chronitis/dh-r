@@ -1,4 +1,4 @@
-dh-r (20170929) UNRELEASED; urgency=medium
+dh-r (20171130) UNRELEASED; urgency=medium
 
   [ Andreas Tille ]
   * dh-make-R: Vcs-Git != Vcs-Browser
@@ -10,8 +10,10 @@ dh-r (20170929) UNRELEASED; urgency=medium
     Testsuite: autopkgtest-pkg-r, which should enable an autodep8
     namespace-can-be-imported test. This will be ignored if
     d/tests/control is present defining some other test(s).
+  * Add script dh-update-R, which updates some fields in d/control
+    after a new R tarball has been imported
 
- -- Andreas Tille <tille@debian.org>  Mon, 16 Jan 2017 16:48:10 +0100
+ -- Gordon Ball <gordon@chronitis.net>  Thu, 30 Nov 2017 16:01:47 +0000
 
 dh-r (20161219) unstable; urgency=medium
 

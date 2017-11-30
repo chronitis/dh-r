@@ -4,3 +4,4 @@ dh/vignette.pm usr/share/perl5/Debian/Debhelper/Sequence
 scripts/convert-to-dh-r usr/share/dh-r
 scripts/dh-make-R usr/bin
 scripts/dh_vignette usr/bin
+scripts/dh-update-R usr/bin
