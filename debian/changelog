@@ -2,6 +2,13 @@ dh-r (20171130) UNRELEASED; urgency=medium
 
   [ Andreas Tille ]
   * dh-make-R: Vcs-Git != Vcs-Browser
+  * Add a TODO for copyright year in the dh-make-R template
+
+  [ Sébastien Villemot ]
+  * Update dh-make-R templates to use AUTOPKGTEST_TMP instead of ADTTMP
+
+  [ Dylan Aïssi ]
+  * Use FIXME instead of TODO in templates to trigger lintian warnings
 
   [ Gordon Ball ]
   * Standards-Version: 4.1.1 (both for this package, and packaging
