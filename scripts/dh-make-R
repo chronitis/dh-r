@@ -130,7 +130,7 @@ Priority: optional
 Maintainer: $maintainer
 Uploaders: $uploaders
 Build-Depends: $builddeps
-Standards-Version: 4.1.1
+Standards-Version: 4.1.2
 Vcs-Browser: $vcsbrowser
 Vcs-Git: $vcs
 Homepage: $homepage

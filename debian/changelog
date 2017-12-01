@@ -11,7 +11,7 @@ dh-r (20171130) UNRELEASED; urgency=medium
   * Use FIXME instead of TODO in templates to trigger lintian warnings
 
   [ Gordon Ball ]
-  * Standards-Version: 4.1.1 (both for this package, and packaging
+  * Standards-Version: 4.1.2 (both for this package, and packaging
     generated using dh-make-R)
   * Packages generated with dh-make-R now automatically include
     Testsuite: autopkgtest-pkg-r, which should enable an autodep8
