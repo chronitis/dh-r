@@ -51,18 +51,17 @@ sub unmanaged {
     return deps_concat(@keep);
 }
 
+say "I: Updating Build-Depends";
 my $unmanaged_builddeps = unmanaged($dsrc->{'Build-Depends'});
+my $rdepends = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Depends", $desc->{Depends}, \%apthash));
+my $rimports = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Imports", $desc->{Imports}, \%apthash));
+my $compiled = lc $desc->{NeedsCompilation} eq "yes";
+$dsrc->{'Build-Depends'} = deps_concat("debhelper (>= 10)", "dh-r", "r-base-dev", $rdepends, $rimports, $unmanaged_builddeps);
+
+say "I: Updating binary Depends, Recommends, Suggests";
 my $unmanaged_depends = unmanaged($dbin->{Depends});
 my $unmanaged_recommends = unmanaged($dbin->{Recommends});
 my $unmanaged_suggests = unmanaged($dbin->{Suggests});
-
-my $rdepends = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Depends", $desc->{Depends}, \%apthash));
-my $rimports = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Imports", $desc->{Imports}, \%apthash));
-
-my $compiled = lc $desc->{NeedsCompilation} eq "yes";
-say "I: Updating Build-Depends";
-$dsrc->{'Build-Depends'} = deps_concat("debhelper (>= 10)", "dh-r", "r-base-dev", $rdepends, $rimports, $unmanaged_builddeps);
-say "I: Updating binary Depends, Recommends, Suggests";
 $dbin->{Depends} = deps_concat("\${R:Depends}", $compiled ? "\${shlibs:Depends}" : "", "\${misc:Depends}", $unmanaged_depends);
 $dbin->{Recommends} = deps_concat("\${R:Recommends}", $unmanaged_recommends);
 $dbin->{Suggests} = deps_concat("\${R:Suggests}", $unmanaged_suggests);
