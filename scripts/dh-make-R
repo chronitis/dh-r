@@ -100,6 +100,7 @@ if ($repo eq "CRAN") {
 my $maintainer = "$ENV{DEBFULLNAME} <$ENV{DEBEMAIL}>";
 my $uploaders = "";
 my $vcs = "";
+my $vcsbrowser = "";
 
 if ($opt_team eq "science") {
     say "I: Generating maintainers, uploaders, VCS entries for debian-science team";
@@ -111,8 +112,8 @@ if ($opt_team eq "science") {
     say "I: Generating maintainers, uploaders, VCS entries for debian-med team";
     $uploaders = $maintainer;
     $maintainer = "Debian Med Packaging Team <debian-med-packaging\@lists.alioth.debian.org>";
-    $vcsbrowser = "https://anonscm.debian.org/cgit/debian-med/$debname.git"
-    $vcs = "https://anonscm.debian.org/git/debian-med/$debname.git"
+    $vcsbrowser = "https://anonscm.debian.org/cgit/debian-med/$debname.git";
+    $vcs = "https://anonscm.debian.org/git/debian-med/$debname.git";
 }
 
 
