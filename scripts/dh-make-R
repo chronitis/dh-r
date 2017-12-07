@@ -37,7 +37,7 @@ pod2usage(1) if $opt_help;
 my $desc = Dpkg::Control->new(type => Dpkg::Control::CTRL_UNKNOWN);
 $desc->load("DESCRIPTION");
 
-my $repo = "CRAN";
+my $repo = "other";
 if ($opt_repo) {
     $repo = $opt_repo;
     say "I: Using repo=$repo from --repo";
@@ -95,6 +95,8 @@ if ($repo eq "CRAN") {
     $homepage = "https://cran.r-project.org/package=$desc->{Package}";
 } elsif ($repo eq "BIOC") {
     $homepage = "https://bioconductor.org/packages/$desc->{Package}/";
+} elsif ($repo eq "other") {
+    $homepage = $desc->{URL};
 }
 
 my $maintainer = "$ENV{DEBFULLNAME} <$ENV{DEBEMAIL}>";
@@ -165,6 +167,8 @@ if ($repo eq "CRAN") {
     $dwatch = "version=4\nhttps://cran.r-project.org/src/contrib/" . $desc->{Package} . '_([-\d.]*)\.tar\.gz';
 } elsif ($repo eq "BIOC") {
     $dwatch = "version=4\n" . 'opts=downloadurlmangle=s?^(.*)\.\.?https:$1packages/release/bioc? \\' . "\nhttps://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html .*/$desc->{Package}_(.*).tar.gz";
+} elsif ($repo eq "other") {
+    $dwatch = "version=4\nFIXME: $homepage";
 }
 
 maybe_write("debian/watch", $dwatch);

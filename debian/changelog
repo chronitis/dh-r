@@ -1,3 +1,10 @@
+dh-r (20171207) UNRELEASED; urgency=medium
+
+  * Team upload.
+  * Improve support of packages from outside CRAN or Bioconductor repositories.
+
+ -- Dylan Aïssi <bob.dybian@gmail.com>  Thu, 07 Dec 2017 22:34:51 +0100
+
 dh-r (20171201) unstable; urgency=medium
 
   [ Andreas Tille ]
