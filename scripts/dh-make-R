@@ -162,13 +162,13 @@ EOF
 maybe_write("debian/rules", $drules);
 chmod 0755, "debian/rules";
 
-my $dwatch = "";
+my $dwatch = "version=4\n";
 if ($repo eq "CRAN") {
-    $dwatch = "version=4\nhttps://cran.r-project.org/src/contrib/" . $desc->{Package} . '_([-\d.]*)\.tar\.gz';
+    $dwatch .= "https://cran.r-project.org/src/contrib/" . $desc->{Package} . '_([-\d.]*)\.tar\.gz';
 } elsif ($repo eq "BIOC") {
-    $dwatch = "version=4\n" . 'opts=downloadurlmangle=s?^(.*)\.\.?https:$1packages/release/bioc? \\' . "\nhttps://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html .*/$desc->{Package}_(.*).tar.gz";
+    $dwatch .= 'opts=downloadurlmangle=s?^(.*)\.\.?https:$1packages/release/bioc? \\' . "\nhttps://bioconductor.org/packages/release/bioc/html/$desc->{Package}.html .*/$desc->{Package}_(.*).tar.gz";
 } elsif ($repo eq "other") {
-    $dwatch = "version=4\nFIXME: $homepage";
+    $dwatch .= "FIXME: $homepage";
 }
 
 maybe_write("debian/watch", $dwatch);
