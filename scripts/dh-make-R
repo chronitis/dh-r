@@ -41,10 +41,10 @@ my $repo = "other";
 if ($opt_repo) {
     $repo = $opt_repo;
     say "I: Using repo=$repo from --repo";
-} elsif (length $desc->{Repo}) {
+} elsif (length $desc->{Repository}) {
     # this appears to be set ("CRAN") for packages originating from CRAN,
     # but is not set for bioconductor, nor for packages direct from upstream
-    $repo = $desc->{Repo};
+    $repo = $desc->{Repository};
     say "I: Using repo=$repo from DESCRIPTION::Repository";
 } elsif (length $desc->{biocViews}) {
     # however, biocViews is (presumably) only going to be set for bioconductor
