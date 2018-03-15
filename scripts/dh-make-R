@@ -128,16 +128,16 @@ if (! -d "debian" ) {
 
 my $dcontrol = <<"EOF";
 Source: $debname
-Section: gnu-r
-Priority: optional
 Maintainer: $maintainer
 Uploaders: $uploaders
+Section: gnu-r
+Testsuite: autopkgtest-pkg-r
+Priority: optional
 Build-Depends: $builddeps
 Standards-Version: 4.1.2
 Vcs-Browser: $vcsbrowser
 Vcs-Git: $vcs
 Homepage: $homepage
-Testsuite: autopkgtest-pkg-r
 
 Package: $debname
 Architecture: $arch
