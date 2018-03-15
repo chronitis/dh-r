@@ -20,7 +20,8 @@ Description: Debian helper tools for packaging R libraries
 
 Package: pkg-r-autopkgtest
 Architecture: all
-Depends: ${misc:Depends}
+Depends: ${misc:Depends},
+         dctrl-tools
 Description: Script for the automatic testing of R packages
  This package contains the pkg-r-autopkgtest script that runs the unit tests
  contained in the source tree from which it is launched. It is intended to be
