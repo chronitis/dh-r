@@ -5,6 +5,7 @@ dh-r (20171207) UNRELEASED; urgency=medium
   * Switch dh-make-R generated VCS fields to salsa.
   * Sort dh-make-R generated d/control fields following the cme order.
   * Bump all Standards-Version to 4.1.3.
+  * Build new binary package pkg-r-autopkgtest.
 
  -- Dylan Aïssi <bob.dybian@gmail.com>  Thu, 07 Dec 2017 22:34:51 +0100
 

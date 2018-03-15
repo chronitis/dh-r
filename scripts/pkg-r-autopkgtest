@@ -1,0 +1,24 @@
+#!/bin/sh -e
+
+export LC_ALL=C.UTF-8
+
+# R DESCRIPTION files use the debian control file format
+# (see R package manual 1.1.1)
+pkgname=$(grep-dctrl -s Package -n '' DESCRIPTION)
+debname=$(grep-dctrl -s Source -n '' debian/control)
+
+# Test 1: Try to load the R library
+echo "BEGIN Test 1: load $pkgname into R"
+R --no-save -e "library('$pkgname')"
+
+###
+echo "Other tests are currently unsupported!"
+echo "They will be progressively added."
+###
+
+# TODO
+# Test 2: Test testthat workflow
+# Test 3: Test RUnit workflow
+# Test 4: Test non-standard workflow
+# Test 4: Test Bioconductor package
+# Test 5: Test to build vignettes

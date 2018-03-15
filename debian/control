@@ -17,3 +17,14 @@ Depends: ${misc:Depends},
 Description: Debian helper tools for packaging R libraries
  Provides the R package buildsystem for debhelper and a script to generate
  packaging skeletons for R packages.
+
+Package: pkg-r-autopkgtest
+Architecture: all
+Depends: ${misc:Depends}
+Description: Script for the automatic testing of R packages
+ This package contains the pkg-r-autopkgtest script that runs the unit tests
+ contained in the source tree from which it is launched. It is intended to be
+ used by the support for R packages, which is implemented in autodep8.
+ .
+ Packages using the tests with autopkgtests in this package need to
+ simply set "Testsuite: autopkgtest-pkg-r" in debian/control.
