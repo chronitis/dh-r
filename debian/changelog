@@ -2,6 +2,7 @@ dh-r (20171207) UNRELEASED; urgency=medium
 
   * Team upload.
   * Improve support of packages from outside CRAN or Bioconductor repositories.
+  * Switch dh-make-R generated VCS fields to salsa.
 
  -- Dylan Aïssi <bob.dybian@gmail.com>  Thu, 07 Dec 2017 22:34:51 +0100
 

@@ -108,14 +108,14 @@ if ($opt_team eq "science") {
     say "I: Generating maintainers, uploaders, VCS entries for debian-science team";
     $uploaders = $maintainer;
     $maintainer = "Debian Science Maintainers <debian-science-maintainers\@lists.alioth.debian.org>";
-    $vcsbrowser = "https://anonscm.debian.org/cgit/debian-science/packages/$debname.git";
-    $vcs = "https://anonscm.debian.org/git/debian-science/packages/$debname.git";
+    $vcsbrowser = "https://salsa.debian.org/r-pkg-team/$debname";
+    $vcs = "https://salsa.debian.org/r-pkg-team/$debname.git";
 } elsif ($opt_team eq "med") {
     say "I: Generating maintainers, uploaders, VCS entries for debian-med team";
     $uploaders = $maintainer;
     $maintainer = "Debian Med Packaging Team <debian-med-packaging\@lists.alioth.debian.org>";
-    $vcsbrowser = "https://anonscm.debian.org/cgit/debian-med/$debname.git";
-    $vcs = "https://anonscm.debian.org/git/debian-med/$debname.git";
+    $vcsbrowser = "https://salsa.debian.org/r-pkg-team/$debname";
+    $vcs = "https://salsa.debian.org/r-pkg-team/$debname.git";
 }
 
 
