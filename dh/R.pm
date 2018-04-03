@@ -99,7 +99,7 @@ sub install {
 
     # Priority: Recommended should go in /library instead of /site-library
     my $libdir = "usr/lib/R/site-library";
-    if ($desc->{Priority} eq "Recommended") {
+    if (lc($desc->{Priority}) eq "recommended") {
         $libdir = "usr/lib/R/library";
         say "I: R package with Priority: $desc->{Priority}, installing in $libdir";
     }
