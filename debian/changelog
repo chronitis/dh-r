@@ -1,4 +1,4 @@
-dh-r (20171207) UNRELEASED; urgency=medium
+dh-r (20180403) unstable; urgency=medium
 
   * Team upload
 
@@ -16,7 +16,7 @@ dh-r (20171207) UNRELEASED; urgency=medium
      - do not prefix debian/docs with package name
      - debhelper 11 
 
- -- Dylan Aïssi <bob.dybian@gmail.com>  Thu, 07 Dec 2017 22:34:51 +0100
+ -- Dylan Aïssi <bob.dybian@gmail.com>  Tue, 03 Apr 2018 16:20:33 +0200
 
 dh-r (20171201) unstable; urgency=medium
 
