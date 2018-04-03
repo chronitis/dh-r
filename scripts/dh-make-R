@@ -262,7 +262,7 @@ if ($opt_tests =~ /generic/) {
 }
 if ($opt_tests =~ /run-unit-test/) {
     maybe_write("debian/tests/run-unit-test", $test_run_unit_test);
-    maybe_write("debian/$debname.docs", "debian/tests/run-unit-test\ntests");
+    maybe_write("debian/docs", "debian/tests/run-unit-test\ntests");
     $autopkgtests{"run-unit-test"} = $testpkgs;
 }
 if ($opt_tests =~ /bioc/) {
