@@ -68,9 +68,9 @@ my $rsuggests = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Su
 my $rimports = deps_concat(Debian::Debhelper::Buildsystem::R::parse_depends("Imports", $desc->{Imports}, \%apthash));
 my $builddeps;
 if ( $rdepends ) {
-    $builddeps = deps_concat("debhelper (>= 10)", "dh-r", "r-base-dev", $rdepends, $rimports);
+    $builddeps = deps_concat("debhelper (>= 11~)", "dh-r", "r-base-dev", $rdepends, $rimports);
 } else {
-    $builddeps = deps_concat("debhelper (>= 10)", "dh-r", "r-base-dev", $rimports);
+    $builddeps = deps_concat("debhelper (>= 11~)", "dh-r", "r-base-dev", $rimports);
 }
 
 say "I: Package depends: $rdepends";
@@ -149,7 +149,7 @@ $longdesc
 EOF
 
 maybe_write("debian/control", $dcontrol);
-maybe_write("debian/compat", "10");
+maybe_write("debian/compat", "11");
 maybe_write("debian/source/format", "3.0 (quilt)");
 
 my $drules = <<"EOF";

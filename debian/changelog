@@ -12,7 +12,9 @@ dh-r (20171207) UNRELEASED; urgency=medium
 
   [ Andreas Tille ]
   * Parse Priority recommended as ignore case
-  * dh-make-R: do not prefix debian/docs with package name
+  * dh-make-R:
+     - do not prefix debian/docs with package name
+     - debhelper 11 
 
  -- Dylan Aïssi <bob.dybian@gmail.com>  Thu, 07 Dec 2017 22:34:51 +0100
 
